@@ -13,7 +13,7 @@ class ScriptletRekognition:
         self.region = region
         self.profile = profile
         if self.profile == "":
-            self.rekognition = boto3.client('rekognition')
+            self.rekognition = boto3.Session(region_name=self.region).client('rekognition')
         else:
             self.rekognition = boto3.Session(profile_name=self.profile, region_name=self.region).client('rekognition')
 
