@@ -16,9 +16,9 @@ class Global:
         handler_file = logging.FileHandler(file_local)
         handler_file.setFormatter(log_formatter)
 
-        if len(log.handlers) == 0:
-            log.addHandler(handler_console)
-            log.addHandler(handler_file)
+        # if len(log.handlers) == 0:
+        #     log.addHandler(handler_console)
+        #     log.addHandler(handler_file)
 
         log.setLevel(logging.INFO)
         return log

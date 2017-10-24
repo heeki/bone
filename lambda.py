@@ -16,6 +16,7 @@ def lambda_handler(event, context):
     collection = os.environ['BONE_REK_COLLECTION']
     index_bucket = os.environ['INDEX_BUCKET']
     search_bucket = os.environ['SEARCH_BUCKET']
+    region = os.environ['REGION']
     found_alias = ''
 
     try:
@@ -23,7 +24,7 @@ def lambda_handler(event, context):
             s3_bucket = record['s3']['bucket']['name']
             image_key = record['s3']['object']['key']
             external_id = image_key.split(".")[0]
-            r_searcher = ScriptletRekognition(collection, s3_bucket)
+            r_searcher = ScriptletRekognition(collection, s3_bucket, region)
 
             print "S3 bucket: {}".format(s3_bucket)
             print "S3 key: {}".format(image_key)

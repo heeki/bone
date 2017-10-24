@@ -7,7 +7,6 @@ from scriptlets.scriptlet_global import Global
 
 class ScriptletRekognition:
     def __init__(self, collection, bucket, region, profile=""):
-        self.log = Global.get_logger("hackathon", "logs/hackathon.log")
         self.collection = collection
         self.bucket = bucket
         self.region = region
