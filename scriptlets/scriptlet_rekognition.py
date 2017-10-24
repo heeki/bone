@@ -59,3 +59,4 @@ class ScriptletRekognition:
             MaxFaces=1
         )
         return response
+
