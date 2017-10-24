@@ -6,48 +6,6 @@ Outputs:
   SNSNotifications:
     Description: Subscribe to this topic to receive notifications coming from the WorkSpaces Deployment Framework
     Value: !Ref ImgProcTopic
-  GroupSetupURL:
-    Description: The URL to access the group setup form
-    Value:
-      "Fn::Join": [ "",
-          [
-            "https://",
-            !Ref WspApiGateway,
-            ".execute-api.",
-            !Ref "AWS::Region",
-            ".amazonaws.com/",
-            !Ref StageEnvironmentName,
-            "/forms/group_setup"
-          ]
-        ]
-  ApproveDeleteURL:
-    Description: The URL to approve a delete user action
-    Value:
-      "Fn::Join": [ "",
-          [
-            "https://",
-            !Ref WspApiGateway,
-            ".execute-api.",
-            !Ref "AWS::Region",
-            ".amazonaws.com/",
-            !Ref StageEnvironmentName,
-            "/delete/approved/username"
-          ]
-        ]
-  ImportWorkspacesURL:
-    Description: The URL to import existing Workspaces into this tool
-    Value:
-      "Fn::Join": [ "",
-          [
-            "https://",
-            !Ref WspApiGateway,
-            ".execute-api.",
-            !Ref "AWS::Region",
-            ".amazonaws.com/",
-            !Ref StageEnvironmentName,
-            "/forms/batch_import"
-          ]
-        ]
 Parameters:
   LambdaFunctionName:
     Type: String
@@ -55,7 +13,7 @@ Parameters:
     MinLength: '1'
     MaxLength: '255'
     AllowedPattern: "[-_ a-zA-Z0-9]*"
-    Default: WspProcessor
+    Default: ImgProcessor
   S3BucketName:
     Type: String
     Description: Enter the name of the bucket where the lambda code zip file is located.
@@ -63,47 +21,19 @@ Parameters:
   S3LambdaZipFile:
     Type: String
     Description: Enter the key/filename for the Lambda code zip file.  e.g. foldername/wsp-lambda.zip
-    Default: workspaces-lambda-code.zip
-  SQSQueueName:
+    Default: bone-lambda-package.zip
+  IndexBucket:
     Type: String
-    Description: Enter the name of the SQS queue used to hold workspaces create/delete requests
-    Default: WSP_Provisioning
-  StageEnvironmentName:
-    AllowedValues:
-    - dev
-    - qa
-    - prod
-    - test
-    - sample
-    - tools
-    ConstraintDescription: must be a valid selection.
-    Default: test
-    Description: Stage environment name.
+    Description: Enter the name of the bucket where you will upload images to be indexed
+    Default: bone-2017-index-bucket
+  SearchBucket:
     Type: String
-  WspTableName:
-    Description: Name of the WorkSpaces tracking DynamoDB Table
+    Description: Enter the name of the bucket where search images will be uploaded
+    Default: bone-2017-search-bucket
+  RekognitionCollectionName:
     Type: String
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedPattern: "[-_ a-zA-Z0-9]*"
-    Default: WSP_Mgmt
-    ConstraintDescription: Must contain only valid characters for table names
-  KeyTableName:
-    Description: Name of the KMS key tracking DynamoDB Table
-    Type: String
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedPattern: "[-_ a-zA-Z0-9]*"
-    Default: WSP_Key
-    ConstraintDescription: Must contain only valid characters for table names
-  GrpTableName:
-    Description: Name of the AD group mapping DynamoDB Table
-    Type: String
-    MinLength: '1'
-    MaxLength: '255'
-    AllowedPattern: "[-_ a-zA-Z0-9]*"
-    Default: WSP_AD_Groups
-    ConstraintDescription: Must contain only valid characters for table names
+    Description: Name of the Rekognition Collection
+    Default: Bone2017Collection
   LogLevel:
     Description: Lambda code logging level
     Type: String
@@ -132,13 +62,14 @@ Resources:
         Variables:
           AWS_ACCOUNT_ID: !Ref "AWS::AccountId"
           LOG_LEVEL: !Ref LogLevel
-          SNS_TOPIC: !Ref ImgProcTopic
-          SNS_REGION: !Ref "AWS::Region"
+          SPEECH_TOPIC_ARN: !Ref ImgProcTopic
+          INDEX_BUCKET: !Ref IndexBucket
+          SEARCH_BUCKET: !Ref SearchBucket
+          BONE_REK_COLLECTION: !Ref RekognitionCollectionName
   ImgProcTopic:
     Type: "AWS::SNS::Topic"
     Properties: 
       DisplayName: RekogniztionImageProcessor
- 
   ImgProcLambdaRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -165,6 +96,12 @@ Resources:
             Action:
               - "rekognition:*"
             Resource: "*"
+          -
+            Effect: "Allow"
+            Action:
+              - "s3:GetObject"
+            Resource:
+              - "*"
           -
             Effect: "Allow"
             Action:
