@@ -12,8 +12,12 @@ def lambda_handler(event, context):
     print "Memory limit (MB): {}".format(context.memory_limit_in_mb)
 
     speech_topic_arn = os.environ['SPEECH_TOPIC_ARN']
-    body = "Hello world!"
-    print body
+    try:
+        for record in event['Records']:
+            s3_bucket = record['s3']['bucket']['name']
+            image_key = record['s3']['object']['key']
+    except KeyError as ke:
+        print("Input object is not formatted correctly. Error: %s", str(ke))
 
     response = {
         'statusCode': 200,
