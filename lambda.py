@@ -16,6 +16,7 @@ def lambda_handler(event, context):
     collection = os.environ['BONE_REK_COLLECTION']
     index_bucket = os.environ['INDEX_BUCKET']
     search_bucket = os.environ['SEARCH_BUCKET']
+    found_alias = ''
 
     try:
         for record in event['Records']:
@@ -23,26 +24,32 @@ def lambda_handler(event, context):
             image_key = record['s3']['object']['key']
             external_id = image_key.split(".")[0]
             r_searcher = ScriptletRekognition(collection, s3_bucket)
+
+            print "S3 bucket: {}".format(s3_bucket)
+            print "S3 key: {}".format(image_key)
             
             if s3_bucket == index_bucket:
                 r_searcher.index_face(image_key, external_id)
+                print "Indexing {}, {}".format(image_key, external_id)
 
             # Call image search
             if s3_bucket == search_bucket:
                 found_alias = r_searcher.search_face(image_key)
+                print "Search found {}".format(found_alias)
 
-            if found_alias:
-                sns = boto3.client('sns')
-                sns.publish(
-                    TopicArn=speech_topic_arn,
-                    Message=JSON.dumps({'alias_name: alias_name})
-                )
+                if found_alias != '':
+                    sns = boto3.client('sns')
+                    sns.publish(
+                        TopicArn=speech_topic_arn,
+                        Message=json.dumps({'alias_name': found_alias})
+                    )
+                    print "Published SNS"
     except KeyError as ke:
         print("Input object is not formatted correctly. Error: %s", str(ke))
 
     response = {
         'statusCode': 200,
         'headers': {},
-        'body': body
+        'body': found_alias
     }
     return response

@@ -13,6 +13,13 @@ export BONE_IAM_POLICY=policy-bone-1
 export BONE_IAM_ROLE=iam-role-bone-1
 export BONE_REK_COLLECTION=rek-bone-1
 
+images uploaded to this bucket will cause an image to be indexed for detection 
+`export INDEX_BUCKET=higs-index-bucket`
+
+images uploaded to this bucket will cause the image to be searched in the collection
+`export SEARCh_BUCKET=higs-search-bucket`
+
+
 # Policies
 ```
 {
@@ -25,7 +32,21 @@ export BONE_REK_COLLECTION=rek-bone-1
                 "s3:*"
             ],
             "Resource": [
-                "arn:aws:s3:::higs-bone-1"
+                "arn:aws:s3:::higs-bone-index",
+                "arn:aws:s3:::higs-bone-search"
+            ]
+        },
+        {
+            "Sid": "Stmt1492636417000",
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+                "logs:DescribeLogStreams"
+            ],
+            "Resource": [
+                "arn:aws:logs:*:*:*"
             ]
         }
     ]
@@ -70,3 +91,12 @@ higs-bone-1/images/joe.jpeg
     'alias_name': alias
 }
 ```
+
+
+
+# Lambda environment variables
+SPEECH_TOPIC_ARN=arn:aws:sns:us-east-1:546275881527:higs-bone-rekognition
+BONE_REK_COLLECTION=rek-bone-1
+INDEX_BUCKET=higs-bone-index
+SEARCH_BUCKET=higs-bone-search
+    
