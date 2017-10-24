@@ -58,5 +58,6 @@ class ScriptletRekognition:
             },
             MaxFaces=1
         )
-        return response
+        # return response
+        return response['FaceMatches'][0]['Face']['ExternalImageId']
 
