@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 
 def lambda_handler(event, context):
@@ -10,6 +11,7 @@ def lambda_handler(event, context):
     print "Request id: {}".format(context.aws_request_id)
     print "Memory limit (MB): {}".format(context.memory_limit_in_mb)
 
+    speech_topic_arn = os.environ['SPEECH_TOPIC_ARN']
     body = "Hello world!"
     print body
 
