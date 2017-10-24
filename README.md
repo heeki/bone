@@ -6,6 +6,7 @@
 pip install boto3
 
 # Bucket
+export BONE_PROFILE=1527
 export BONE_S3=higs-bone-1
 export BONE_IAM_POLICY=policy-bone-1
 export BONE_IAM_ROLE=iam-role-bone-1
