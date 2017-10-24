@@ -1,6 +1,7 @@
 import boto3
 import json
 
+
 def lambda_handler(event, context):
     print "Received event: {}".format(json.dumps(event, indent=2))
     print "Received context: {}".format(str(context))
