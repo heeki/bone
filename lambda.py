@@ -16,6 +16,11 @@ def lambda_handler(event, context):
         for record in event['Records']:
             s3_bucket = record['s3']['bucket']['name']
             image_key = record['s3']['object']['key']
+
+            # Call image search
+
+            # Extract user alias from best match
+                # invoke_speech(found_alias)
     except KeyError as ke:
         print("Input object is not formatted correctly. Error: %s", str(ke))
 
