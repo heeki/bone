@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 
 def lambda_handler(event, context):
@@ -10,8 +11,18 @@ def lambda_handler(event, context):
     print "Request id: {}".format(context.aws_request_id)
     print "Memory limit (MB): {}".format(context.memory_limit_in_mb)
 
-    body = "Hello world!"
-    print body
+    speech_topic_arn = os.environ['SPEECH_TOPIC_ARN']
+    try:
+        for record in event['Records']:
+            s3_bucket = record['s3']['bucket']['name']
+            image_key = record['s3']['object']['key']
+
+            # Call image search
+
+            # Extract user alias from best match
+                # invoke_speech(found_alias)
+    except KeyError as ke:
+        print("Input object is not formatted correctly. Error: %s", str(ke))
 
     response = {
         'statusCode': 200,
