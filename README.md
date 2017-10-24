@@ -22,6 +22,7 @@ images uploaded to this bucket will cause the image to be searched in the collec
 
 # Policies
 ```
+
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -32,8 +33,8 @@ images uploaded to this bucket will cause the image to be searched in the collec
                 "s3:*"
             ],
             "Resource": [
-                "arn:aws:s3:::higs-bone-index",
-                "arn:aws:s3:::higs-bone-search"
+                "arn:aws:s3:::higs-bone-index/*",
+                "arn:aws:s3:::higs-bone-search/*"
             ]
         },
         {
@@ -51,6 +52,42 @@ images uploaded to this bucket will cause the image to be searched in the collec
         }
     ]
 }
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1508813761000",
+            "Effect": "Allow",
+            "Action": [
+                "rekognition:*"
+            ],
+            "Resource": [
+                "*"
+            ]
+        }
+    ]
+}
+
+
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1508814050000",
+            "Effect": "Allow",
+            "Action": [
+                "sns:Publish"
+            ],
+            "Resource": [
+                "arn:aws:sns:us-east-1:546275881527:higs-bone-rekognition"
+            ]
+        }
+    ]
+}
+
+
 ```
 
 
